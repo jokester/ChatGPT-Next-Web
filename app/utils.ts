@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
 import { showToast } from "./components/ui-lib";
 import Locale from "./locales";
-import { RequestMessage } from "./client/api";
+import { ClientApi, RequestMessage } from "./client/api";
+import { DEFAULT_MODELS, ModelProvider } from "./constant";
+import { identifyDefaultClaudeModel } from "./utils/checkers";
+import { useAccessStore } from "./store";
 
 export function trimTopic(topic: string) {
   // Fix an issue where double quotes still show in the Indonesian language
@@ -263,4 +266,34 @@ export function isVisionModel(model: string) {
   return (
     visionKeywords.some((keyword) => model.includes(keyword)) || isGpt4Turbo
   );
+}
+
+export function isSupportRAGModel(modelName: string) {
+  const specialModels = [
+    "gpt-4-turbo",
+    "gpt-4-turbo-2024-04-09",
+    "gpt-4o",
+    "gpt-4o-2024-05-13",
+  ];
+  if (specialModels.some((keyword) => modelName === keyword)) return true;
+  if (isVisionModel(modelName)) return false;
+  return DEFAULT_MODELS.filter((model) => model.provider.id === "openai").some(
+    (model) => model.name === modelName,
+  );
+}
+
+export function getClientApi(modelName: string): ClientApi {
+  const accessStore = useAccessStore.getState();
+  if (accessStore.isUseOpenAIEndpointForAllModels) {
+    return new ClientApi(ModelProvider.GPT);
+  }
+  var api: ClientApi;
+  if (modelName.startsWith("gemini")) {
+    api = new ClientApi(ModelProvider.GeminiPro);
+  } else if (identifyDefaultClaudeModel(modelName)) {
+    api = new ClientApi(ModelProvider.Claude);
+  } else {
+    api = new ClientApi(ModelProvider.GPT);
+  }
+  return api;
 }
