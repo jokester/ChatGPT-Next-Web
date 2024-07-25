@@ -1,5 +1,15 @@
 import { ApiPath, Google, REQUEST_TIMEOUT_MS } from "@/app/constant";
-import { ChatOptions, getHeaders, LLMApi, LLMModel, LLMUsage } from "../api";
+import {
+  AgentChatOptions,
+  ChatOptions,
+  CreateRAGStoreOptions,
+  getHeaders,
+  LLMApi,
+  LLMModel,
+  LLMUsage,
+  SpeechOptions,
+  TranscriptionOptions,
+} from "../api";
 import { useAccessStore, useAppConfig, useChatStore } from "@/app/store";
 import { getClientConfig } from "@/app/config/client";
 import { DEFAULT_API_HOST } from "@/app/constant";
@@ -15,8 +25,21 @@ import {
   isVisionModel,
 } from "@/app/utils";
 import { preProcessImageContent } from "@/app/utils/chat";
+import options from "cheerio/lib/options";
 
 export class GeminiProApi implements LLMApi {
+  speech(options: SpeechOptions): Promise<ArrayBuffer> {
+    throw new Error("Method not implemented.");
+  }
+  transcription(options: TranscriptionOptions): Promise<string> {
+    throw new Error("Method not implemented.");
+  }
+  toolAgentChat(options: AgentChatOptions): Promise<void> {
+    throw new Error("Method not implemented.");
+  }
+  createRAGStore(options: CreateRAGStoreOptions): Promise<string> {
+    throw new Error("Method not implemented.");
+  }
   path(path: string): string {
     const accessStore = useAccessStore.getState();
 
@@ -279,7 +302,9 @@ export class GeminiProApi implements LLMApi {
       } else {
         const res = await fetch(chatPath, chatPayload);
         clearTimeout(requestTimeoutId);
+
         const resJson = await res.json();
+
         if (resJson?.promptFeedback?.blockReason) {
           // being blocked
           options.onError?.(

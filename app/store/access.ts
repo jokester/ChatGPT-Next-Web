@@ -54,7 +54,7 @@ const DEFAULT_ACCESS_STATE = {
   // azure
   azureUrl: "",
   azureApiKey: "",
-  azureApiVersion: "2023-08-01-preview",
+  azureApiVersion: "2024-02-15-preview",
 
   // google ai studio
   googleUrl: DEFAULT_GOOGLE_URL,
@@ -87,7 +87,13 @@ const DEFAULT_ACCESS_STATE = {
   disableGPT4: false,
   disableFastLink: false,
   customModels: "",
+  isEnableRAG: false,
   defaultModel: "",
+
+  // tts config
+  edgeTTSVoiceName: "zh-CN-YunxiNeural",
+
+  isUseOpenAIEndpointForAllModels: false,
 };
 
 export const useAccessStore = createPersistStore(
@@ -98,6 +104,24 @@ export const useAccessStore = createPersistStore(
       this.fetch();
 
       return get().needCode;
+    },
+
+    useOpenAIEndpointForAllModels() {
+      this.fetch();
+
+      return get().isUseOpenAIEndpointForAllModels;
+    },
+
+    edgeVoiceName() {
+      this.fetch();
+
+      return get().edgeTTSVoiceName;
+    },
+
+    enableRAG() {
+      this.fetch();
+
+      return get().isEnableRAG;
     },
 
     isValidOpenAI() {
@@ -186,7 +210,8 @@ export const useAccessStore = createPersistStore(
           googleApiKey: string;
         };
         state.openaiApiKey = state.token;
-        state.azureApiVersion = "2023-08-01-preview";
+        state.azureApiVersion = "2024-02-15-preview";
+        state.googleApiKey = state.token;
       }
 
       return persistedState as any;

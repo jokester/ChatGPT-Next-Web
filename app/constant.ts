@@ -1,5 +1,5 @@
-export const OWNER = "Yidadaa";
-export const REPO = "ChatGPT-Next-Web";
+export const OWNER = "Hk-Gosuto";
+export const REPO = "ChatGPT-Next-Web-LangChain";
 export const REPO_URL = `https://github.com/${OWNER}/${REPO}`;
 export const ISSUE_URL = `https://github.com/${OWNER}/${REPO}/issues`;
 export const UPDATE_URL = `${REPO_URL}#keep-updated`;
@@ -10,9 +10,8 @@ export const RUNTIME_CONFIG_DOM = "danger-runtime-config";
 
 export const DEFAULT_API_HOST = "https://api.nextchat.dev";
 export const OPENAI_BASE_URL = "https://api.openai.com";
-export const ANTHROPIC_BASE_URL = "https://api.anthropic.com";
-
 export const GEMINI_BASE_URL = "https://generativelanguage.googleapis.com/";
+export const ANTHROPIC_BASE_URL = "https://api.anthropic.com";
 
 export const BAIDU_BASE_URL = "https://aip.baidubce.com";
 export const BAIDU_OATUH_URL = `${BAIDU_BASE_URL}/oauth/2.0/token`;
@@ -30,6 +29,7 @@ export enum Path {
   Settings = "/settings",
   NewChat = "/new-chat",
   Masks = "/masks",
+  Plugins = "/plugins",
   Auth = "/auth",
 }
 
@@ -37,6 +37,7 @@ export enum ApiPath {
   Cors = "",
   Azure = "/api/azure",
   OpenAI = "/api/openai",
+  GoogleAI = "/api/google",
   Anthropic = "/api/anthropic",
   Google = "/api/google",
   Baidu = "/api/baidu",
@@ -51,6 +52,7 @@ export enum SlotID {
 
 export enum FileName {
   Masks = "masks.json",
+  Plugins = "plugins.json",
   Prompts = "prompts.json",
 }
 
@@ -59,6 +61,7 @@ export enum StoreKey {
   Access = "access-control",
   Config = "app-config",
   Mask = "mask-store",
+  Plugin = "plugin-store",
   Prompt = "prompt-store",
   Update = "chat-update",
   Sync = "sync",
@@ -117,6 +120,8 @@ export const Anthropic = {
 
 export const OpenaiPath = {
   ChatPath: "v1/chat/completions",
+  SpeechPath: "v1/audio/speech",
+  TranscriptionPath: "v1/audio/transcriptions",
   UsagePath: "dashboard/billing/usage",
   SubsPath: "dashboard/billing/subscription",
   ListModelPath: "v1/models",
@@ -201,6 +206,23 @@ export const KnowledgeCutOffDate: Record<string, string> = {
   "gemini-pro-vision": "2023-12",
 };
 
+export const DEFAULT_TTS_ENGINE = "OpenAI-TTS";
+export const DEFAULT_TTS_ENGINES = ["OpenAI-TTS", "Edge-TTS"];
+export const DEFAULT_TTS_MODEL = "tts-1";
+export const DEFAULT_TTS_VOICE = "alloy";
+export const DEFAULT_TTS_MODELS = ["tts-1", "tts-1-hd"];
+export const DEFAULT_TTS_VOICES = [
+  "alloy",
+  "echo",
+  "fable",
+  "onyx",
+  "nova",
+  "shimmer",
+];
+
+export const DEFAULT_STT_ENGINE = "WebAPI";
+export const DEFAULT_STT_ENGINES = ["WebAPI", "OpenAI Whisper"];
+export const FIREFOX_DEFAULT_STT_ENGINE = "OpenAI Whisper";
 const openaiModels = [
   "gpt-3.5-turbo",
   "gpt-3.5-turbo-1106",
@@ -351,3 +373,30 @@ export const internalAllowedWebDavEndpoints = [
   "https://webdav.yandex.com",
   "https://app.koofr.net/dav/Koofr",
 ];
+
+export const MYFILES_BROWSER_TOOLS_SYSTEM_PROMPT = `
+# Tools
+
+## myfiles_browser
+
+You have the tool 'myfiles_browser' with the following functions:
+issues queries to search the file(s) uploaded in the current conversation and displays the results.
+
+This tool is for browsing the files uploaded by the user.
+
+Parts of the documents uploaded by users will be automatically included in the conversation. Only use this tool when the relevant parts don't contain the necessary information to fulfill the user's request.
+
+If the user needs to summarize the document, they can summarize it through parts of the document.
+
+Think carefully about how the information you find relates to the user's request. Respond as soon as you find information that clearly answers the request.
+
+Issue multiple queries to the 'myfiles_browser' command only when the user's question needs to be decomposed to find different facts. In other scenarios, prefer providing a single query. Avoid single-word queries that are extremely broad and will return unrelated results.
+
+Here are some examples of how to use the 'myfiles_browser' command:
+User: What was the GDP of France and Italy in the 1970s? => myfiles_browser(["france gdp 1970", "italy gdp 1970"])
+User: What does the report say about the GPT4 performance on MMLU? => myfiles_browser(["GPT4 MMLU performance"])
+User: How can I integrate customer relationship management system with third-party email marketing tools? => myfiles_browser(["customer management system marketing integration"])
+User: What are the best practices for data security and privacy for our cloud storage services? => myfiles_browser(["cloud storage security and privacy"])
+
+The user has uploaded the following files:
+`;
